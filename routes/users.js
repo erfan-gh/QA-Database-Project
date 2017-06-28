@@ -3,6 +3,7 @@ var router = express.Router();
 var models = require('../models');
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
+var auth = require('./auth');
 
 passport.use(new LocalStrategy(
 	{
@@ -35,8 +36,8 @@ passport.deserializeUser(function(id, done) {
 
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/', auth, function(req, res, next) {
+	res.send('User profile here')
 });
 
 router.get('/register', function(req, res, next) {

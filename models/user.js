@@ -7,6 +7,8 @@ var UserSchema = Schema(
 		password: {type: String, required: true, max: 100},
 		first_name: {type: String, required: true, max: 100},
 		last_name: {type: String, required: true, max: 100},
+		skills: {type: Array},
+		rate: {type: Number, default: 0},
 	}
 );
 
