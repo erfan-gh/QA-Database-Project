@@ -4,6 +4,19 @@ var models = require('../models');
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 var auth = require('./auth');
+var multer  = require('multer')
+var path = require('path')
+
+var storage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, 'media');
+	},
+	filename: function(req, file, cb) {
+		cb(null, Date.now() + path.extname(file.originalname));
+	},
+});
+
+var upload = multer({ storage: storage });
 
 passport.use(new LocalStrategy(
 	{
@@ -44,8 +57,11 @@ router.get('/register', function(req, res, next) {
 	res.render('register');
 });
 
-router.post('/register', function(req, res, next) {
+router.post('/register', upload.single('userPhoto'), function(req, res, next) {
 	var user = new models.User(req.body);
+	if (req.file) {
+		user.profile_name = req.file['filename'];
+	}
 
 	user.save(function(err) {
 		if (err) res.render('error', {message: err.message, error: err});
@@ -62,6 +78,6 @@ router.get('/logout', function(req, res, next) {
 	res.redirect('/');
 });
 
-router.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: false }));
+router.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/users/login', failureFlash: false }));
 
 module.exports = router;

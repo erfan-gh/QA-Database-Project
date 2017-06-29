@@ -9,6 +9,7 @@ var UserSchema = Schema(
 		last_name: {type: String, required: true, max: 100},
 		skills: {type: Array},
 		rate: {type: Number, default: 0},
+		profile_name: {type: String, required: false},
 	}
 );
 
