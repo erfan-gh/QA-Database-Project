@@ -3,8 +3,23 @@ var router = express.Router();
 var models = require('../models');
 var auth = require('./auth')
 
-router.get('/', auth, function(req, res, next) {
-  res.send('Topics here')
+router.get('/', function(req, res, next) {
+	models.Topic.aggregate([
+	  { "$match": {} },
+	  { "$lookup": {
+	    "localField": "creator_id",
+	    "from": "users",
+	    "foreignField": "_id",
+	    "as": "userinfo"
+	  } },
+	], function(err, doc) {
+		params = []
+		for(i in doc) {
+			params.push({title: doc[i].title, first_name: doc[i].userinfo[0].first_name, last_name: doc[i].userinfo[0].last_name});
+		}
+
+		res.render('topics', {topics: params});
+	});
 });
 
 router.get('/create', auth, function(req, res, next) {

@@ -1,0 +1,8 @@
+extends layout
+
+block content
+	.container
+		each topic in topics
+			.panel.panel-primary
+				.panel-heading= topic.first_name + ', ' + topic.last_name
+				.panel-body= topic.title
