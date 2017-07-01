@@ -7,4 +7,8 @@ router.get('/', auth, function(req, res, next) {
   res.send('Topics here')
 });
 
+router.get('/create', auth, function(req, res, next) {
+	res.render('create-topic');
+});
+
 module.exports = router;
