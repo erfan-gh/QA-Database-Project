@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  .container
+  form.form-signin(method='post')
+    h2.form-signin-heading Fill out the blanks
+    label.sr-only(for='inputTitle') title
+    input#inputTitle.form-control(name='title', type='text', placeholder='Title', required='', autofocus='')
+
+    label.sr-only(for='inputBody') body
+    textarea#inputBody.form-control(name='body', type='text', placeholder='Body', required='')
+
+    button.btn.btn-lg.btn-primary.btn-block(type='submit') submit new topic!
