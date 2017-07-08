@@ -37,6 +37,7 @@ app.use(passport.session());
 // Add Bootsrtap and JQuery directory
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist')));
 app.use('/jquery', express.static(path.join(__dirname, '/node_modules/jquery/dist')));
+app.use('/tagsinput', express.static(path.join(__dirname, '/node_modules/bootstrap-tagsinput/dist')));
 
 app.use('/', index);
 app.use('/users', users);

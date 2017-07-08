@@ -59,6 +59,7 @@ router.get('/register', function(req, res, next) {
 
 router.post('/register', upload.single('userPhoto'), function(req, res, next) {
 	var user = new models.User(req.body);
+	user.skills = req.body.skills.split(',');
 	if (req.file) {
 		user.profile_name = req.file['filename'];
 	}
