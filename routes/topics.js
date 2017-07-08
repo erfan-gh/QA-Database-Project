@@ -42,7 +42,7 @@ router.post('/create', auth, function(req, res, next) {
 		question_id: question._id,
 		answers: {},
 	});
-
+	topic.skills = req.body.skills.split(',');
 	topic.save(function(err) {
 		if (err) res.render('error', {message: err.message, error: err});
 		else res.redirect('/topics');
