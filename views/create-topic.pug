@@ -10,4 +10,9 @@ block content
     label.sr-only(for='inputBody') body
     textarea#inputBody.form-control(name='body', type='text', placeholder='Body', required='')
 
+    
+    label(for='inputSkills') Skills
+    br
+    input#inputSkills.form-control(name='skills', type='text', value='', data-role='tagsinput')
+
     button.btn.btn-lg.btn-primary.btn-block(type='submit') submit new topic!

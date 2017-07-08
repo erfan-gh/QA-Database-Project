@@ -8,6 +8,7 @@ var TopicSchema = Schema(
 		created_at: {type: Date, required: true, default:Date.now},
 		question_id: {type: Schema.Types.ObjectId, required: true},
 		answers: {type: Array},
+		skills: {type: Array},
 	}
 );
 
