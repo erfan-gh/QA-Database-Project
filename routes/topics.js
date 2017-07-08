@@ -1,7 +1,8 @@
 var express = require('express');
+var async = require('async');
 var router = express.Router();
 var models = require('../models');
-var auth = require('./auth')
+var auth = require('./auth');
 
 router.get('/', function(req, res, next) {
 	models.Topic.aggregate([
@@ -15,7 +16,7 @@ router.get('/', function(req, res, next) {
 	], function(err, doc) {
 		params = []
 		for(i in doc) {
-			params.push({title: doc[i].title, first_name: doc[i].userinfo[0].first_name, last_name: doc[i].userinfo[0].last_name});
+			params.push({topic_id: doc[i]._id, title: doc[i].title, first_name: doc[i].userinfo[0].first_name, last_name: doc[i].userinfo[0].last_name});
 		}
 
 		res.render('topics', {topics: params});
@@ -49,6 +50,33 @@ router.post('/create', auth, function(req, res, next) {
 	});
 });
 
+
+router.get('/view/:topic_id', function(req, res, next) {
+	// models.Topic.findById(req.params.topic_id, function(err, doc) {
+	// 	res.send(doc);
+	// });
+	async.waterfall(
+    [
+    	function(cb) {
+    		models.Topic.findById(req.params.topic_id, function(err, doc) {
+    			cb(null, doc);
+    		});
+    	},
+    	function(topic, cb) {
+    		models.Post.findById(topic.question_id, function(err, doc) {
+    			cb(null, topic, doc);
+    		});
+    	},
+    	function(topic, question, cb) {
+    		models.Post.find({_id: {$in: topic.answers}}, function(err, doc) {
+    			cb(null, topic, question, doc);
+    		});
+    	},
+    ], function(err, topic, question, answers) {
+    	// console.log(question);
+    	res.render('view-topic', {topic: topic, question: question, answers: answers});
+    });
+});
 
 
 module.exports = router;
