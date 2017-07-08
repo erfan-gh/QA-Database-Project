@@ -6,4 +6,4 @@ block content
 			.panel.panel-primary
 				.panel-heading=topic.first_name + ',' + topic.last_name 
 				.panel-body=topic.title
-				input.btn.btn-primary(type='button', value='view more', onclick="location.href = '/';")
+				input.btn.btn-primary(type='button', value='view more', onclick="location.href = '/topics/view/" + topic.topic_id + "';")
