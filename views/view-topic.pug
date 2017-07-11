@@ -6,3 +6,12 @@ block content
 		.panel.panel-primary
 			.panel-heading= topic.title 
 			.panel-body= question.body
+			br
+			br
+			br
+			form(method='post')
+					textarea#commentBody.form-control(name='body', type='text', placeholder='your comment ...', required='')
+					input.btn.btn-primary.comment-button(type='button', value='submit', onclick="location.href = '/answer/?id=5';")
+		form(method='post')
+				textarea#replyBody.form-control(name='body', type='text', placeholder='your answer ...', required='', rows='5', cols='100')
+				input.btn.btn-primary.comment-button(type='button', value='submit', onclick="location.href = '/answer/?id=5';")
