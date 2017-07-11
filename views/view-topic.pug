@@ -16,25 +16,26 @@ block content
 					textarea#commentBody.form-control(name='body', type='text', placeholder='your comment ...', required='')
 					input.btn.btn-primary.comment-button(type='submit', value='submit')
 
-
-			each answer in answers
-				.panel.panel-primary
-					.panel-heading= topic.title 
-					.panel-body= answer.body
-					br
-					each comment in answer.comments
-						.alert.alert-warning(role="alert")
-							= comment.body
-					br
-					form(method='post', action = '/topics/comment/')
-							input(type="hidden", name="post_id", value=answer._id)
-							textarea#commentBody.form-control(name='body', type='text', placeholder='your comment ...', required='')
-							input.btn.btn-primary.comment-button(type='submit', value='submit')
-
-
-
+		each answer in answers
+			.panel.panel-primary
+				.panel-heading= topic.title 
+				.panel-body= answer.body
+				br
+				each comment in answer.comments
+					.alert.alert-warning(role="alert")
+						= comment.body
+				br
+				form(method='post', action = '/topics/comment/')
+						input(type="hidden", name="post_id", value=answer._id)
+						textarea#commentBody.form-control(name='body', type='text', placeholder='your comment ...', required='')
+						input.btn.btn-primary.comment-button(type='submit', value='submit')
+			br
+			br
 
 
-		form(method='post', action='/topics/answer/')
+
+
+
+		form(method='post', action='/topics/answer/' + topic._id)
 				textarea#replyBody.form-control(name='body', type='text', placeholder='your answer ...', required='', rows='5', cols='100')
 				input.btn.btn-primary.comment-button(type='submit', value='submit')
