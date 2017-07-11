@@ -23,6 +23,14 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+router.get('/search', auth, function(req, res, next){
+	res.render('search');
+});
+
+router.post('/search', auth, function(req, res, next){
+	console.log(req.body.x);
+});
+
 router.get('/create', auth, function(req, res, next) {
 	res.render('create-topic');
 });
