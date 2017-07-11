@@ -31,17 +31,18 @@ router.post('/create', auth, function(req, res, next) {
 	var question = new models.Post({
 		body: req.body.body,
 		creator_id: req.user._id,
+		comments: [],
 	});
 
 	question.save(function(err) {
-		if (err) res.render('error', {message: err.message, error: err});
+		if (err) console.log(err);
 	});
 
 	var topic = new models.Topic({
 		title: req.body.title,
 		creator_id: req.user._id,
 		question_id: question._id,
-		answers: {},
+		answers: [],
 	});
 	topic.skills = req.body.skills.split(',');
 	topic.save(function(err) {
@@ -52,9 +53,6 @@ router.post('/create', auth, function(req, res, next) {
 
 
 router.get('/view/:topic_id', function(req, res, next) {
-	// models.Topic.findById(req.params.topic_id, function(err, doc) {
-	// 	res.send(doc);
-	// });
 	async.waterfall(
     [
     	function(cb) {
@@ -63,19 +61,36 @@ router.get('/view/:topic_id', function(req, res, next) {
     		});
     	},
     	function(topic, cb) {
-    		models.Post.findById(topic.question_id, function(err, doc) {
+    		models.Post.findById(topic.question_id).populate('comments').exec(function(err, doc) {
     			cb(null, topic, doc);
     		});
     	},
     	function(topic, question, cb) {
-    		models.Post.find({_id: {$in: topic.answers}}, function(err, doc) {
+    		models.Post.find({_id: {$in: topic.answers}}).populate('comments').exec(function(err, doc) {
     			cb(null, topic, question, doc);
     		});
     	},
     ], function(err, topic, question, answers) {
-    	// console.log(question);
+    	console.log(question);
     	res.render('view-topic', {topic: topic, question: question, answers: answers});
     });
+});
+
+
+router.post('/comment', auth, function(req, res, next) {
+	comment = new models.Comment({
+		body: req.body.body,
+		creator_id: req.user._id,
+	});
+
+	comment.save(function(err) {
+		if (err) console.log(err);
+	});
+
+	models.Post.findByIdAndUpdate(req.body.post_id, {$push: {comments: comment._id}}, function(err) {
+		if (err) res.render('error', {message: err.message, error: err});
+		else res.redirect('/topics');
+	});
 });
 
 
