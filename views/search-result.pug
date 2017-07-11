@@ -1,0 +1,8 @@
+extends layout
+
+block content
+	.container
+		each topic in topics
+			.panel.panel-primary
+				.panel-body=topic.title
+				input.btn.btn-primary(type='button', value='view more', onclick="location.href = '/topics/view/" + topic._id + "';")

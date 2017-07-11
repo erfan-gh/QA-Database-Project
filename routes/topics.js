@@ -3,6 +3,7 @@ var async = require('async');
 var router = express.Router();
 var models = require('../models');
 var auth = require('./auth');
+var mongoose = require('mongoose');
 
 router.get('/', function(req, res, next) {
 	models.Topic.aggregate([
@@ -23,12 +24,38 @@ router.get('/', function(req, res, next) {
 	});
 });
 
-router.get('/search', auth, function(req, res, next){
+router.get('/search', function(req, res, next){
 	res.render('search');
 });
 
-router.post('/search', auth, function(req, res, next){
-	console.log(req.body.x);
+router.post('/search', function(req, res, next){
+	keywords_array = req.body.query.split(' ');
+
+	models.Topic.aggregate([
+	   { "$match": { "skills": {"$in": keywords_array } }},
+	   { "$project": {
+           "title": 1,
+	       "tagMatch": {
+	           "$setIntersection": [
+	               "$skills",
+	               keywords_array
+	           ]
+	       },
+	       "sizeMatch": {
+	           "$size": {
+	               "$setIntersection": [
+	                   "$skills",
+	                   keywords_array
+	               ]
+	           }
+	       }
+	   }},
+	   { "$match": { "sizeMatch": { "$gte": 1 } } },
+	   { "$sort" : { "sizeMatch": -1 } },
+	   { "$project": { "title": 1, "tagMatch": 1} },
+	], function(err, doc) {
+		res.render('search-result', {topics: doc});
+	});
 });
 
 router.get('/create', auth, function(req, res, next) {
@@ -102,7 +129,7 @@ router.post('/comment', auth, function(req, res, next) {
 });
 
 
-router.post('/answer/:topic_id', function(req, res, next) {
+router.post('/answer/:topic_id', auth, function(req, res, next) {
 	topic_id = req.params.topic_id;
 	answer = new models.Post({
 		body: req.body.body,
@@ -120,5 +147,44 @@ router.post('/answer/:topic_id', function(req, res, next) {
 	})
 });
 
+router.get('/rate/:post_id/up', auth, function(req, res, next) {
+	rate_obj = new models.Rate({
+		user_id: req.user._id,
+		rate: 25,
+		post_id: req.params.post_id,
+	});
+
+	rate_obj.save(function(err) {
+		if (err) console.log(err);
+	});
+
+	res.redirect('/topics');
+});
+
+router.get('/rate/:post_id/down', auth, function(req, res, next) {
+	rate_obj = new models.Rate({
+		user_id: req.user._id,
+		rate: -25,
+		post_id: req.params.post_id,
+	});
+
+	rate_obj.save(function(err) {
+		if (err) console.log(err);
+	});
+
+	res.redirect('/topics');
+});
+
+router.get('/rate/:post_id/', function(req, res, next) {
+	models.Rate.aggregate([
+		{ "$match": { "post_id": mongoose.Types.ObjectId(req.params.post_id) }},
+		{ "$group": { "_id" : null, sum : { "$sum": "$rate" } } }
+	], function(err, doc) {
+		if (doc.length == 0)
+			res.send("" + 0);
+		else
+			res.send("" + doc[0].sum);
+	});
+});
 
 module.exports = router;

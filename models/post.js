@@ -7,6 +7,7 @@ var PostSchema = Schema(
 		creator_id: {type: Schema.Types.ObjectId, required: true, max: 100},
 		created_at: {type: Date, required: true, default: Date.now},
 		comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
+		rates: [{type: Schema.Types.ObjectId, ref: 'Rate'}],
 	}
 );
 

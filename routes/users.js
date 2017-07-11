@@ -70,6 +70,18 @@ router.post('/register', upload.single('userPhoto'), function(req, res, next) {
 	});
 });
 
+router.get('/edit', auth, function(req, res, next) {
+	res.render('edit-profile', {user_id: req.user._id});
+});
+
+router.post('/edit/:user_id', upload.single('userPhoto'), function(req, res, next) {
+	models.User.findByIdAndUpdate(req.params.user_id, req.body, function(err) {
+		if (err) res.render('error', {message: err.message, error: err});
+		else res.redirect('/topics');
+	});
+});
+
+
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
