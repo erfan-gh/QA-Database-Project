@@ -1,0 +1,13 @@
+extends layout
+
+block content
+ form(method='post')
+  .container
+    .row
+      h2 type your search here...
+      #custom-search-input
+        .input-group.col-md-12
+          input.search-query.form-control(type='text', placeholder='Search...', name='x')
+          span.input-group-btn
+            button.btn.btn-info(type='submit')
+              span.glyphicon.glyphicon-search
