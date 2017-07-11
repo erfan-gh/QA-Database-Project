@@ -102,4 +102,23 @@ router.post('/comment', auth, function(req, res, next) {
 });
 
 
+router.post('/answer/:topic_id', function(req, res, next) {
+	topic_id = req.params.topic_id;
+	answer = new models.Post({
+		body: req.body.body,
+		creator_id: req.user._id,
+		comments: [],
+	});
+
+	answer.save(function(err) {
+		if (err) console.log(err);
+	});
+
+	models.Topic.findByIdAndUpdate(topic_id, {$push: {answers: answer._id}}, function(err) {
+		if (err) res.render('error', {message: err.message, error: err});
+		else res.redirect('/topics');
+	})
+});
+
+
 module.exports = router;
